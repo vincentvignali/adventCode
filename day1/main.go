@@ -15,13 +15,16 @@ type Elve struct {
 }
 type ElveCollection []Elve
 
-const file = "firstPuzzle.txt"
+const (
+	file         = "firstPuzzle.txt"
+	topRange int = 3
+)
 
 var (
-	elves               = ElveCollection{}
-	elveCtr         int = 0
-	topThreeElveCtr int = 0
-	buffer              = []int64{}
+	elves         = ElveCollection{}
+	elveCtr int   = 0
+	acc     int64 = 0
+	topCtr  int   = 0
 )
 
 func main() {
@@ -37,28 +40,25 @@ func main() {
 			if err != nil {
 				fmt.Println(err)
 			}
-			buffer = append(buffer, calorie)
+			acc += calorie
 		} else {
-			var elveTotalCalorie int64 = 0
-			for _, v := range buffer {
-				elveTotalCalorie += v
-			}
-			newElve := Elve{name: "Elfe " + strconv.Itoa(elveCtr), totalCalorie: int(elveTotalCalorie)}
+			newElve := Elve{name: "Elfe " + fmt.Sprintf("%v", elveCtr), totalCalorie: int(acc)}
 			elves = append(elves, newElve)
-			buffer = buffer[len(buffer):]
 			elveCtr++
+			acc = 0
 		}
 	}
 
+	// Part 1
 	sort.SliceStable(elves, func(i, j int) bool {
 		return elves[i].totalCalorie > elves[j].totalCalorie
 	})
 	fmt.Printf("Top One Elve: %v ! He has a total of  %v calories.\n", elves[0].name, elves[0].totalCalorie)
 
-	topThreeElves := elves[:3]
-	topThreeElveCtr = 0
-	for _, elve := range topThreeElves {
-		topThreeElveCtr = topThreeElveCtr + elve.totalCalorie
+	// Part 2
+	t := elves[:topRange]
+	for _, elve := range t {
+		topCtr += elve.totalCalorie
 	}
-	fmt.Printf("Top three Number total is %v calories.\n", topThreeElveCtr)
+	fmt.Printf("Top three Number total is %v calories.\n", topCtr)
 }
